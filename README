@@ -1,4 +1,4 @@
-jwt-js - JSON Web Tokens implemented in pure JSONScript
+jwt-js - JSON Web Tokens implemented in pure JavaScript
 
 authors:
   Michael Hanson <mhanson@mozilla.com>
@@ -7,7 +7,7 @@ Unless otherwise indicated, all code in this project is covered by the
 MPL1.1/GPL2.0/LGPL2.1 trilicense included at the end of this file.
 
 This project is an implementation of the JSON Web Tokens draft
-in JSONScript.  The reference URL for the specification being implemented
+in JavaScript.  The reference URL for the specification being implemented
 is http://self-issued.info/docs/draft-jones-json-web-token-00.html.
 
 Getting started:
