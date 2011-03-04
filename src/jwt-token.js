@@ -97,7 +97,6 @@ WebToken.prototype =
     var digestValue = algorithm.finalize();
     var signatureValue = algorithm.sign();
 
-    dump(signatureValue+"\n");
     return stringToSign + "." + signatureValue;
   },
   

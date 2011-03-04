@@ -10,6 +10,11 @@ This project is an implementation of the Java Web Tokens draft
 in JavaScript.  The reference URL for the specification being implemented
 is http://self-issued.info/docs/draft-jones-json-web-token-00.html.
 
+Getting started:
+After cloning the repo, you should be able to run the tests with:
+  make dist
+  open tests/jsonWebTokenTest.htm  (in the web browser of your choice)
+
   
 ***** BEGIN LICENSE BLOCK *****
 * Version: MPL 1.1/GPL 2.0/LGPL 2.1
