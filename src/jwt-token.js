@@ -1,7 +1,18 @@
+function NoSuchAlgorithmException(message) {
+  this.toString = function() { return "No such algorithm: "+this.message; };
+}
+function NotImplementedException(message) {
+  this.toString = function() { return "Not implemented: "+this.message; };
+}
+
 function HMACAlgorithm(hash, key)
 {
-  this.hash = hash;
-  this.key = key;
+  if (hash == "sha256") {
+    this.hash = sjcl.hash.sha256;
+  } else {
+    throw new NoSuchAlgorithmException("HMAC does not support hash " + hash);
+  }
+  this.key = sjcl.codec.utf8String.toBits(key);
 }
 
 HMACAlgorithm.prototype = 
@@ -17,7 +28,9 @@ HMACAlgorithm.prototype =
   
   sign: function _sign()
   {
-    return window.btoa(Crypto.HMAC(this.hash, this.data, this.key, {asString:true}));
+    var hmac = new sjcl.misc.hmac(this.key, this.hash);
+    var result = hmac.encrypt(this.data);
+    return sjcl.codec.base64.fromBits(result);
   }
 }
 
@@ -28,7 +41,7 @@ function RSASHAAlgorithm(hash, keyPEM)
   } else if (hash == "sha256") {
     this.hash = "sha256";
   } else {
-    throw NoSuchAlgorithmException("JWT algorithm: " + jwtAlgStr);  
+    throw new NoSuchAlgorithmException("JWT algorithm: " + hash);  
   }
   this.keyPEM = keyPEM;
 }
@@ -53,7 +66,7 @@ RSASHAAlgorithm.prototype =
 
 function WebToken(objectStr, algorithm)
 {
-  this.jsonStr = objectStr;
+  this.objectStr = objectStr;
   this.pkAlgorithm = algorithm;
 }
 
@@ -74,14 +87,39 @@ WebToken.prototype =
     var algorithm;
     
     if ("ES256" === jwtAlgStr) {
-      //oid = SECObjectIdentifiers.secp256r1;
-      algorithm = new SHA256Digest();
+      throw new NotImplementedException("JWT algorithm: " + jwtAlgStr);
     } else if ("ES384" === jwtAlgStr) {
-      //oid = SECObjectIdentifiers.secp384r1;
-      algorithm = new SHA384Digest();
+      throw new NotImplementedException("JWT algorithm: " + jwtAlgStr);
     } else if ("ES512" === jwtAlgStr) {
-      //oid = SECObjectIdentifiers.secp521r1;
-      algorithm = new SHA512Digest();
+      throw new NotImplementedException("JWT algorithm: " + jwtAlgStr);
+    } else if ("HS256" === jwtAlgStr) {
+      algorithm = new HMACAlgorithm("sha256", key);
+    } else if ("RS256" === jwtAlgStr) {
+      algorithm = new RSASHAAlgorithm("sha256", key);
+    } else {
+      throw new NoSuchAlgorithmException("JWT algorithm: " + jwtAlgStr);
+    }
+
+    var algBytes = window.btoa(this.pkAlgorithm);
+    var jsonBytes = window.btoa(this.objectStr);
+    algorithm.update(jsonBytes);
+    var digestValue = algorithm.finalize();
+    var signatureValue = algorithm.sign();
+    return algBytes + "." + jsonBytes + "." + signatureValue;
+  },
+  
+  verify: function _verify()
+  {
+    var header = jsonObj(this.pkAlgorithm);
+    var jwtAlgStr = header.alg;
+    var algorithm;
+    
+    if ("ES256" === jwtAlgStr) {
+      throw NotImplementedException("JWT algorithm: " + jwtAlgStr);
+    } else if ("ES384" === jwtAlgStr) {
+      throw NotImplementedException("JWT algorithm: " + jwtAlgStr);
+    } else if ("ES512" === jwtAlgStr) {
+      throw NotImplementedException("JWT algorithm: " + jwtAlgStr);
     } else if ("HS256" === jwtAlgStr) {
       algorithm = new HMACAlgorithm(Crypto.SHA256, key);
     } else if ("RS256" === jwtAlgStr) {
@@ -91,17 +129,14 @@ WebToken.prototype =
     }
 
     var algBytes = window.btoa(this.pkAlgorithm);
-    var jsonBytes = window.btoa(this.jsonStr);
-    var stringToSign = algBytes + "." + jsonBytes;
-    algorithm.update(stringToSign); // or something?
+    var jsonBytes = window.btoa(this.objectStr);
+    algorithm.update(jsonBytes);
     var digestValue = algorithm.finalize();
     var signatureValue = algorithm.sign();
 
-    return stringToSign + "." + signatureValue;
-  },
-  
-  verify: function _verify()
-  {
+    return algBytes + "." + jsonBytes + "." + signatureValue;
+
+
   }
 }
 
