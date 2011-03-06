@@ -4,4 +4,4 @@ openssl dgst -sha1 -binary < jwtClaim.b64oneline | openssl base64 -e > jwtClaimD
 openssl dgst -sha256 -binary < jwtClaim.b64oneline | openssl base64 -e > jwtClaimDigest.sha256
 openssl dgst -sha256 -binary -sign key.pem  < jwtClaim.b64oneline | openssl base64 -e > rsa_sha256_signature
 
-openssl dgst -sha256 -binary -hmac key.pem  < jwtClaim.b64oneline | openssl base64 -e > hmac_sha256_signature
+openssl dgst -sha256 -binary -hmac `echo -n "hmackey"`  < jwtClaim.b64oneline | openssl base64 -e > hmac_sha256_signature
