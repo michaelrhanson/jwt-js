@@ -1,7 +1,8 @@
-cat jwtClaim.txt | openssl base64 -e  > jwtClaim.b64
-tr -d '\012'  < jwtClaim.b64 > jwtClaim.b64oneline
-openssl dgst -sha1 -binary < jwtClaim.b64oneline | openssl base64 -e > jwtClaimDigest.sha1
-openssl dgst -sha256 -binary < jwtClaim.b64oneline | openssl base64 -e > jwtClaimDigest.sha256
-openssl dgst -sha256 -binary -sign key.pem  < jwtClaim.b64oneline | openssl base64 -e > rsa_sha256_signature
+echo -n "." > delimiter
+cat rs256header.b64 delimiter jwtClaim.b64 > rs256SigningInput
+cat hs256header.b64 delimiter jwtClaim.b64 > hs256SigningInput
 
-openssl dgst -sha256 -binary -hmac `echo -n "hmackey"`  < jwtClaim.b64oneline | openssl base64 -e > hmac_sha256_signature
+openssl dgst -sha256 -binary < rs256SigningInput | openssl base64 -e > jwtClaimDigest.sha256
+openssl dgst -sha256 -binary -sign key.pem  < rs256SigningInput | openssl base64 -e > rsa_sha256_signature
+
+openssl dgst -sha256 -binary -hmac `echo -n "hmackey"`  < hs256SigningInput | openssl base64 -e > hmac_sha256_signature
