@@ -8,7 +8,7 @@ MPL1.1/GPL2.0/LGPL2.1 trilicense included at the end of this file.
 
 This project is an implementation of the JSON Web Tokens draft
 in JavaScript.  The reference URL for the specification being implemented
-is http://self-issued.info/docs/draft-jones-json-web-token-00.html.
+is http://self-issued.info/docs/draft-jones-json-web-token-01.html.
 
 Getting started:
 After cloning the repo, you should be able to run the tests with:
