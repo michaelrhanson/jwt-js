@@ -45,8 +45,8 @@ var JWTInternals = (function() {
   {
     var s = window.btoa(arg); // Standard base64 encoder
     s = s.split('=')[0]; // Remove any trailing '='s
-    s = s.replace('+', '-', 'g'); // 62nd char of encoding
-    s = s.replace('/', '_', 'g'); // 63rd char of encoding
+    s = s.replace(/\+/g, '-'); // 62nd char of encoding
+    s = s.replace(/\//g, '_'); // 63rd char of encoding
     // TODO optimize this; we can do much better
     return s;
   }
@@ -54,8 +54,8 @@ var JWTInternals = (function() {
   function base64urldecode(arg)
   {
     var s = arg;
-    s = s.replace('-', '+', 'g'); // 62nd char of encoding
-    s = s.replace('_', '/', 'g'); // 63rd char of encoding
+    s = s.replace(/-/g, '+'); // 62nd char of encoding
+    s = s.replace(/_/g, '/'); // 63rd char of encoding
     switch (s.length % 4) // Pad with trailing '='s
     {
       case 0: break; // No pad chars in this case
